@@ -9,7 +9,7 @@ import os
 chrome_options = Options()  
 chrome_options.add_argument("--headless")
 driver = webdriver.Chrome(chrome_options=chrome_options)
-
+print('Gettting Location.......')
 r = requests.get('https://api.ipdata.co?api-key=6d67a0188fdfa81caecafb10882cb4c1b24c5ed970ec6c41d87987c7').json()
 driver.get('https://www.covid19india.org/essentials')
 driver.find_element_by_xpath('//button[@class="button is-purple search-button-mobile"]').click()
@@ -20,6 +20,7 @@ rows=driver.find_elements_by_xpath('//tr[@role="row"]')
 data=[]
 maxt=0
 colname=[]
+print('You are in ',r['city'])
 for no,i in enumerate(rows):
 	if(no==0):
 		cols=i.text
@@ -33,10 +34,12 @@ for no,i in enumerate(rows):
 colname=colname+['alternate']*(abs(len(colname)-maxt))
 df=pd.DataFrame(data,columns=colname)
 pd.set_option('display.max_columns', None)
-print(df.head())
+# print(df.head())
 df.to_excel("Service.xlsx")
 
 
 df.to_html('test.html')
-
+file_object = open('test.html', 'a')
+file_object.write('<link rel="stylesheet" href="index.css">')
+file_object.close()
 os.system('firefox test.html')
